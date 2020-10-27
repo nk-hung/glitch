@@ -1,13 +1,11 @@
-// server.js
-// where your node app starts
-
-// we've started you off with Express (https://expressjs.com/)
-// but feel free to use whatever libraries or frameworks you'd like through `package.json`.
 const express = require('express');
 const app = express();
-
+const bodyParser = require('body-parser');
 app.set('view engine', 'pug');
 app.set('views', './views');
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 var todoList = [
   {id: 0, title:'Đi chợ'},
@@ -28,13 +26,29 @@ app.get('/todos', function(req, res) {
 
 app.get('/todos/search', function(req, res) {
   let q = req.query.q;
-  let matchedTodo = todoList.filter(function(todoItem) {
-      return todoItem.title.toLowerCase().indexOf(q.toLowerCase()) !== -1;
-  });
+  if(q){
+    let matchedTodo = todoList.filter(function(todoItem) {
+        return todoItem.title.toLowerCase().indexOf(q.toLowerCase()) !== -1;
+    });
+    res.render('todos/index', {
+        todoList: matchedTodo,
+        values: q
+    });
+  } else {res.render('todos/index', {
+    todoList: todoList
+    })
+  }
+});
+
+app.get('/todo/create', (req, res) => {
   res.render('todos/index', {
-      todoList: matchedTodo,
-      values: q
-  });
+    todoList: todoList
+  });  
+});
+
+app.post('/todos/create', (req, res) => {
+  todoList.push(req.body);
+  res.redirect('/todos');
 });
 // listen for requests :)
 

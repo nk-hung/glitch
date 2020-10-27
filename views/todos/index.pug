@@ -1,7 +1,11 @@
 form(action="/todos/search", method="GET")
-  input( type="text" name="q" value=values)
+  input(type="text" name="q" value=values)
   button Search
 
+form(action="/todos/create", method="POST")
+  input(type="text", name="title")
+  button Create
+  
 ul
   each todo in todoList
     li= todo.title
